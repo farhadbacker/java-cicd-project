@@ -30,6 +30,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+         
+    <!-- GitHub Packages Configuration -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/farhadbacker/java-cicd-project</url>
+        </repository>
+    </distributionManagement>
+
 
     <build>
         <plugins>
