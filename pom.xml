@@ -10,7 +10,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>java-cicd-app</artifactId>
-    <version>1.0.0</version>
+    <version>1.1</version>
 
     <name>Java CI/CD Application</name>
     <description>Java Calculator for GitHub Actions CI/CD</description>
