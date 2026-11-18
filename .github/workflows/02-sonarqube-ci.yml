@@ -1,1 +1,64 @@
 
+name: 02 - SonarQube Analysis
+
+on:
+  workflow_run:
+    workflows:
+      - "01 - Java Build and Unit Tests"
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  sonarqube:
+    name: SonarQube Code Quality Analysis
+
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.repository.full_name == github.repository
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Step 1: Checkout the exact commit from Pipeline 1
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      # Step 2: Set up Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Step 3: Run SonarQube analysis
+      - name: Build and Analyze with SonarQube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          mvn -B clean verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
+            -Dsonar.projectKey=farhadbacker_java-cicd-project \
+            -Dsonar.organization=farhadbacker \
+            -Dsonar.host.url="$SONAR_HOST_URL" \
+            -Dsonar.token="$SONAR_TOKEN" \
+            -Dsonar.qualitygate.wait=true
+
+      # Step 4: Upload JAR for Pipeline 3
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app-jar
+          path: target/*.jar
+          if-no-files-found: error
+          retention-days: 7
+
