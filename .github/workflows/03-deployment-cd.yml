@@ -17,11 +17,13 @@ jobs:
   publish:
     name: Publish Maven Package
 
+   
     if: >
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main' &&
-      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.event == 'workflow_run' &&
       github.event.workflow_run.repository.full_name == github.repository
+
 
     runs-on: ubuntu-latest
 
