@@ -7,6 +7,7 @@ on:
       - "02 - SonarQube Analysis"
     types:
       - completed
+  workflow_dispatch: 
 
 permissions:
   contents: read
